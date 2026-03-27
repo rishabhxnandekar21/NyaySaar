@@ -56,8 +56,6 @@ htmlcov/
 
 # ENV & SECRETS
 .env
-.env.*
-*.env
 
 # LOGS
 *.log
