@@ -16,7 +16,6 @@
 - [Installation & Setup](#-installation--setup)
 - [Quick Test](#-quick-test)
 - [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
 
 ---
 
@@ -255,29 +254,6 @@ nyay-saar/
 └── README.md
 ```
 
-=======
-NYAY_SAAR/
-├── backend/
-│ └── app/
-│ ├── api/
-│ ├── rag/
-│ ├── services/
-│ ├── config/
-│ ├── models/
-│ ├── utils/
-│ └── main.py
-│
-├── frontend/
-│ ├── app/
-│ ├── public/
-│ └── package.json
-│
-├── .gitignore
-├── .env.example
-└── README.md
-
-> > > > > > > 9722531836c32c8b6c0d9bfa2d23ba07fff55ee6
-
 ---
 
 ## 🚀 Installation & Setup
@@ -396,12 +372,3 @@ Once both servers are running:
 | Chat gives wrong answers             | Re-upload the document — it may not have been indexed correctly       |
 
 ---
-
-## 🤝 Contributing
-
-Pull requests are welcome! If you find a bug or have a feature idea, open an issue first to discuss it.
-
-1. Fork the repository
-2. Create your branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m "Add: your feature"`
-4. Push to your fork and open a Pull Request
