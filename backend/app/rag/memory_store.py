@@ -4,20 +4,17 @@ from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
 import os
 
-# 🔹 Model
+# Model
 model = SentenceTransformer("intfloat/multilingual-e5-base")
 
-# 🔹 Pinecone
+# Pinecone
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 index = pc.Index(os.getenv("PINECONE_INDEX_NAME"))
 
-# 🔹 Namespace (VERY IMPORTANT)
+# Namespace
 MEMORY_NAMESPACE = "chat-memory"
 
-
-# =========================
-# 🔹 STORE MEMORY
-# =========================
+# STORE MEMORY
 def store_memory(query: str, answer: str, session_id: str):
     try:
         memory_text = f"User: {query}\nAssistant: {answer}"
@@ -44,9 +41,7 @@ def store_memory(query: str, answer: str, session_id: str):
         print(f"[Memory Store Error]: {e}")
 
 
-# =========================
-# 🔹 RETRIEVE MEMORY
-# =========================
+# RETRIEVE MEMORY
 def retrieve_memory(query: str, session_id: str, top_k: int = 3) -> List[str]:
     try:
         query_vector = model.encode(query).tolist()
@@ -58,7 +53,7 @@ def retrieve_memory(query: str, session_id: str, top_k: int = 3) -> List[str]:
             namespace=MEMORY_NAMESPACE,
             filter={
                 "type": "memory",
-                "session_id": session_id   # 🔥 session isolation
+                "session_id": session_id 
             }
         )
 

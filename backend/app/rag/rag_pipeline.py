@@ -15,18 +15,16 @@ from app.rag.memory_store import (
 from collections import defaultdict
 
 
-# 🔹 Initialize LLM
+# Initialize LLM
 groq = GroqClient()
 
 
-# 🔹 Short-term memory (in-memory)
+# Short-term memory (in-memory)
 chat_memory = defaultdict(list)
 MAX_HISTORY = 5
 
 
-# =========================
-# 🔹 SHORT MEMORY
-# =========================
+# SHORT MEMORY
 def get_short_memory(session_id):
     return chat_memory[session_id][-MAX_HISTORY:]
 
@@ -38,9 +36,7 @@ def add_short_memory(session_id, query, answer):
     })
 
 
-# =========================
-# 🔹 INGEST
-# =========================
+# INGEST
 def ingest_pdf(file_path: str, doc_id: str):
     pages = extract_text_from_pdf(file_path)
     chunks = chunk_document_by_page(pages, doc_id)
@@ -51,21 +47,19 @@ def ingest_pdf(file_path: str, doc_id: str):
     print("Uploaded to Pinecone")
 
 
-# =========================
-# 🔹 ASK
-# =========================
+# ASK
 async def ask(query: str, session_id: str):
 
-    # 🔹 1. Retrieve documents
+    # 1. Retrieve documents
     doc_ctx = retrieve_documents(query)
 
-    # 🔹 2. Retrieve long-term memory
+    # 2. Retrieve long-term memory
     mem_ctx = retrieve_memory(query, session_id)
 
-    # 🔹 3. Short-term memory
+    # 3. Short-term memory
     short_mem = get_short_memory(session_id)
 
-    # 🔹 4. Generate Answer
+    # 4. Generate Answer
     answer = await generate_answer(
         query=query,
         documents=doc_ctx,
@@ -73,7 +67,7 @@ async def ask(query: str, session_id: str):
         short_memory=short_mem
     )
 
-    # 🔹 5. Store memory
+    # 5. Store memory
     add_short_memory(session_id, query, answer)
 
     if len(query) > 20:

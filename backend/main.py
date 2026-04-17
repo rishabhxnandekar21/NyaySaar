@@ -1,10 +1,3 @@
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-print("PINECONE:", os.getenv("PINECONE_API_KEY"))
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -18,7 +11,7 @@ settings = Settings()
 
 app = FastAPI(
     title="NyaySaar API",
-    description="AI-powered legal assistant (RAG based)",
+    description="AI powered legal assistant",
     version="1.0.0"
 )
 
@@ -30,20 +23,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(upload_router, prefix="/api", tags=["Upload"])
-app.include_router(chat_router, prefix="/api", tags=["Chat"])      # ✅ added
-app.include_router(summary_router, prefix="/api", tags=["Summary"]) # ✅ added
-
+app.include_router(chat_router, prefix="/api", tags=["Chat"])   
+app.include_router(summary_router, prefix="/api", tags=["Summary"]) 
 @app.get("/")
 def root():
     return {
-        "message": "NyaySaar API running 🚀",
+        "message": "NyaySaar API running",
         "environment": settings.APP_ENV
     }
 
 @app.on_event("startup")
 async def startup_event():
-    print("🚀 Server started")
+    print("Server started")
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    print("🛑 Server stopped")
+    print("Server stopped")
