@@ -1,40 +1,35 @@
-
 # FastAPI Backend
 fastapi
 uvicorn[standard]
 python-multipart
-
 
 # Config & Environment
 pydantic
 pydantic-settings
 python-dotenv
 
-
 # PDF Processing
 PyMuPDF
-
 
 # RAG + LLM
 langchain
 langchain-community
 
+# Embeddings (IMPORTANT ✅)
+sentence-transformers
 
 # Vector Database
-pinecone
+pinecone-client
 
-
-# LLM(Groq)
+# LLM (Groq)
 groq
 
 # Requests
 requests
 
-
 # Utilities
 tiktoken
 numpy
-
 
 # Testing 
 pytest
