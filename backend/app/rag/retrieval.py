@@ -7,27 +7,26 @@ from app.rag.embedding_store import embed_text, get_index
 DOC_NAMESPACE = "documents"
 
 
-def retrieve_documents(query: str, top_k: int = 5):
-    try:
-        query_vector = embed_text(query, is_query=True)
-        
-        index = get_index()
+def retrieve_documents(query, doc_id):
+    query_embedding = embed_text(query)
 
-        results = index.query(
-            vector=query_vector,
-            top_k=top_k,
-            include_metadata=True,
-            namespace=DOC_NAMESPACE
-        )
+    index = get_index()
 
-        documents = []
-        for match in results.matches:
-            text = match.metadata.get("text")
-            if text:
-                documents.append(text)
+    results = index.query(
+        vector=query_embedding,
+        top_k=5,
+        include_metadata=True,
+        filter={"doc_id": doc_id}
+    )
 
-        return documents
+    print("RAW MATCHES:", results)   # debug
 
-    except Exception as e:
-        print(f"[Retrieval Error]: {e}")
-        return []
+    docs = []
+
+    for match in results["matches"]:
+        if "metadata" in match and "text" in match["metadata"]:
+            docs.append(match["metadata"]["text"])
+
+    print("FINAL DOCS:", docs)   # debug
+
+    return docs

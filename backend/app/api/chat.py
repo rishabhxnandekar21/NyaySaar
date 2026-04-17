@@ -7,13 +7,15 @@ router = APIRouter()
 class ChatRequest(BaseModel):
     query: str
     session_id: str
+    doc_id: str
 
 
 @router.post("/chat")
 async def chat(req: ChatRequest):
     response = await ask(   # ✅ USE PIPELINE
         query=req.query,
-        session_id=req.session_id
+        session_id=req.session_id,
+        doc_id=req.doc_id
     )
 
     return {

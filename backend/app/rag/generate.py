@@ -2,7 +2,8 @@
 
 from app.services.groq_client import GroqClient
 
-groq_client = GroqClient()
+def get_groq_client():
+    return GroqClient()
 
 
 # PROMPT BUILDER
@@ -38,7 +39,7 @@ async def generate_answer(query, documents, long_memory, short_memory):
     try:
         prompt = build_prompt(query, documents, long_memory, short_memory)
 
-        # Use your GroqClient class
+        groq_client = get_groq_client()   # ✅ added
         response = groq_client.generate(prompt)
 
         return str(response)
@@ -51,7 +52,10 @@ async def generate_answer(query, documents, long_memory, short_memory):
 async def generate_summary(text: str):
     try:
         prompt = f"You are NyaySaar, an AI legal assistant. Summarize the following legal document in simple, clear language:\n\n{text}\n\nSummary:"
+
+        groq_client = get_groq_client()   # ✅ added
         return groq_client.generate(prompt)
+
     except Exception as e:
         print(f"[Summary Error]: {e}")
         return "Sorry, I couldn't generate a summary at the moment."

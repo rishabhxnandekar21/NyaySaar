@@ -1,10 +1,13 @@
 import os
 from groq import Groq
+from app.config.settings import Settings  
+
+settings = Settings() 
 
 class GroqClient:
     def __init__(self):
         self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-        self.model = "llama3-8b-8192"
+        self.model = settings.GROQ_MODEL   
 
     def generate(self, prompt: str, system: str = None, temperature: float = 0.2) -> str:
         messages = []
@@ -15,7 +18,7 @@ class GroqClient:
         messages.append({"role": "user", "content": prompt})
 
         response = self.client.chat.completions.create(
-            model=self.model,
+            model=self.model,  
             messages=messages,
             temperature=temperature,
         )

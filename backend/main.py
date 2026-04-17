@@ -1,10 +1,15 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+load_dotenv()
 
+import os
+print("MAIN ENV CHECK:", os.getenv("PINECONE_API_KEY"))
+
+from fastapi import FastAPI
 from app.api.upload import router as upload_router
+
+from fastapi.middleware.cors import CORSMiddleware
 from app.api.chat import router as chat_router
 from app.api.summary import router as summary_router
-
 from app.config.settings import Settings
 
 settings = Settings()

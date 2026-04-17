@@ -23,6 +23,7 @@ def embed_text(text: str, is_query: bool = False):
 def embed_texts(texts: List[str]) -> List[List[float]]:
     formatted = ["passage: " + t for t in texts]
     return model.encode(formatted).tolist()
+    
 def upsert_chunks(chunks: List[Chunk]):
     texts = [c.text for c in chunks]
 

@@ -4,6 +4,7 @@ from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
 import os
 
+
 # Model
 model = SentenceTransformer("intfloat/multilingual-e5-base")
 

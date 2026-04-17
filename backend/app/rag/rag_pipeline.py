@@ -48,10 +48,10 @@ def ingest_pdf(file_path: str, doc_id: str):
 
 
 # ASK
-async def ask(query: str, session_id: str):
+async def ask(query: str, session_id: str, doc_id: str):
 
     # 1. Retrieve documents
-    doc_ctx = retrieve_documents(query)
+    doc_ctx = retrieve_documents(query, doc_id)
 
     # 2. Retrieve long-term memory
     mem_ctx = retrieve_memory(query, session_id)
