@@ -8,7 +8,7 @@ DOC_NAMESPACE = "documents"
 
 
 def retrieve_documents(query, doc_id):
-    query_embedding = embed_text(query)
+    query_embedding = embed_text(query, is_query=True)
 
     index = get_index()
 
@@ -16,7 +16,7 @@ def retrieve_documents(query, doc_id):
         vector=query_embedding,
         top_k=5,
         include_metadata=True,
-        filter={"doc_id": doc_id}
+        filter={"doc_id": {"$eq": doc_id}}
     )
 
     print("RAW MATCHES:", results)   # debug

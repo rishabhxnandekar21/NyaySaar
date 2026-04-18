@@ -6,7 +6,7 @@ from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 from .chunking import Chunk
 
-# Load embedding model (runs locally)
+#Load embedding model
 model = SentenceTransformer("intfloat/multilingual-e5-base")
 
 def get_index():

@@ -15,26 +15,26 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 @router.post("/upload")
 async def upload(file: UploadFile = File(...)):
     
-    # Validate file
+    #Validate file
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files allowed")
 
-    # Unique document ID
+    #Unique document ID
     doc_id = str(uuid.uuid4())
 
     file_path = os.path.join(UPLOAD_DIR, f"{doc_id}.pdf")
 
-    # Save file
+    #Save file
     with open(file_path, "wb") as f:
         f.write(await file.read())
 
-    # Extract text
+    #Extract text
     text = extract_text_from_pdf(file_path)
 
-    # Chunking
+    #Chunking
     chunks = chunk_document_by_page(text, doc_id)
 
-    # Store embeddings
+    #Store embeddings
     upsert_chunks(chunks)
 
     return {

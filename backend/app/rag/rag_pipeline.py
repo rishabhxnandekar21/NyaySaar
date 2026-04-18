@@ -15,11 +15,11 @@ from app.rag.memory_store import (
 from collections import defaultdict
 
 
-# Initialize LLM
+#Initialize LLM
 groq = GroqClient()
 
 
-# Short-term memory (in-memory)
+#Short-term memory (in-memory)
 chat_memory = defaultdict(list)
 MAX_HISTORY = 5
 
