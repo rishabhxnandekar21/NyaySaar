@@ -15,7 +15,7 @@ PyMuPDF
 langchain
 langchain-community
 
-# Embeddings (IMPORTANT ✅)
+# Embeddings
 sentence-transformers
 
 # Vector Database

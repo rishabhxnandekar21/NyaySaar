@@ -5,7 +5,6 @@
 ![React](https://img.shields.io/badge/React-18+-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![LangChain](https://img.shields.io/badge/LangChain-Latest-1C3C3C?style=for-the-badge&logo=chainlink&logoColor=white)
 ![Pinecone](https://img.shields.io/badge/Pinecone-VectorDB-000000?style=for-the-badge&logo=pinecone&logoColor=white)
 
 **A full-stack AI application that transforms complex, jargon-heavy court orders into plain-language summaries — accessible to everyone, not just lawyers.**
