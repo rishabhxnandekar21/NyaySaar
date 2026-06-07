@@ -38,6 +38,8 @@ env/
 
 .pytest_cache/
 
+uploads/*
+!uploads/.gitkeep
 
 #ENV
 
