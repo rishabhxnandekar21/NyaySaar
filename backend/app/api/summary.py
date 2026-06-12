@@ -27,6 +27,15 @@ async def summarize(data: SummaryRequest):
     result = await generate_summary(text)
 
     return {
-        "summary": result.get("summary", ""),
-        "verdict": result.get("verdict", "")
-    }
+    "title": result.get("title"),
+    "court": result.get("court"),
+    "date": result.get("date"),
+    "caseType": result.get("caseType"),
+    "verdict": result.get("verdict"),
+    "verdictType": result.get("verdictType"),
+    "summary": result.get("summary"),
+    "keyPoints": result.get("keyPoints"),
+    "importantParties": result.get("importantParties"),
+    "legalSections": result.get("legalSections"),
+    "confidence": result.get("confidence")
+}
