@@ -11,6 +11,7 @@ import {
   ArrowRight,
   RotateCcw,
 } from "lucide-react";
+import axios from "axios";
 
 const STAGES = {
   IDLE: "idle",
@@ -27,20 +28,13 @@ const ANALYSIS_STEPS = [
 ];
 
 const mockSummary = {
-  title: "Case No. 2024/CR/1847 — State vs. Ramesh Kumar",
-  court: "Sessions Court, Delhi",
-  date: "14 November 2024",
-  verdict: "Acquitted",
-  verdictType: "acquittal",
-  summary:
-    "The court found the defendant not guilty on all charges due to insufficient evidence from the prosecution. All bail conditions are revoked with immediate effect, and no restrictions remain on travel or employment.",
-  keyPoints: [
-    "Defendant acquitted of all charges",
-    "Prosecution failed to establish proof beyond reasonable doubt",
-    "Bail conditions revoked with immediate effect",
-    "No restrictions on travel or employment",
-  ],
-  confidence: 97,
+  title: "Sample Court Order",
+  court: "Supreme Court of India",
+  date: "2024",
+  verdictType: "unknown",
+  summary: "Sample summary",
+  keyPoints: ["Point 1", "Point 2"],
+  confidence: 95,
   pages: 12,
   readTime: "2 min",
 };
@@ -61,6 +55,14 @@ const verdictConfig = {
     bg: "bg-red-50",
     border: "border-red-200",
     dot: "bg-red-500",
+    icon: AlertTriangle,
+  },
+  unknown: {
+    label: "Unknown",
+    color: "text-zinc-600",
+    bg: "bg-zinc-50",
+    border: "border-zinc-200",
+    dot: "bg-zinc-400",
     icon: AlertTriangle,
   },
 };
@@ -137,6 +139,14 @@ export default function InteractiveToolSection() {
   const [fileName, setFileName] = useState("");
   const [dragActive, setDragActive] = useState(false);
   const [analysisStep, setAnalysisStep] = useState(0);
+  const [analysis, setAnalysis] = useState(null);
+  const [error, setError] = useState(null);
+  const displayData = analysis || mockSummary;
+
+  const estimatedReadTime = Math.max(
+    1,
+    Math.ceil((displayData.summary || "").split(" ").length / 200),
+  );
 
   // Drive the step animation during ANALYZING
   useEffect(() => {
@@ -168,12 +178,53 @@ export default function InteractiveToolSection() {
     setTimeout(() => setStage(STAGES.COMPLETE), 1000 + totalAnalysis);
   }, []);
 
+  const uploadAndAnalyze = async (file) => {
+    try {
+      setError(null);
+      setFileName(file.name);
+
+      setStage(STAGES.UPLOADING);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadResponse = await axios.post(
+        "http://localhost:8000/api/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      const docId = uploadResponse.data.doc_id;
+
+      setStage(STAGES.ANALYZING);
+
+      const summaryResponse = await axios.post(
+        "http://localhost:8000/api/summary",
+        {
+          doc_id: docId,
+        },
+      );
+
+      setAnalysis(summaryResponse.data);
+
+      setStage(STAGES.COMPLETE);
+    } catch (err) {
+      console.error(err);
+      setError("Analysis failed");
+      setStage(STAGES.IDLE);
+    }
+  };
+
   const handleDrop = useCallback(
     (e) => {
       e.preventDefault();
       setDragActive(false);
       const file = e.dataTransfer?.files?.[0];
-      if (file) simulateUpload(file);
+      if (file) uploadAndAnalyze(file);
     },
     [simulateUpload],
   );
@@ -181,7 +232,7 @@ export default function InteractiveToolSection() {
   const handleFileInput = useCallback(
     (e) => {
       const file = e.target.files?.[0];
-      if (file) simulateUpload(file);
+      if (file) uploadAndAnalyze(file);
     },
     [simulateUpload],
   );
@@ -192,7 +243,7 @@ export default function InteractiveToolSection() {
     setAnalysisStep(0);
   };
 
-  const vc = verdictConfig[mockSummary.verdictType] || verdictConfig.acquittal;
+  const vc = verdictConfig[displayData.verdictType] || verdictConfig.unknown;
 
   return (
     <section
@@ -453,7 +504,7 @@ export default function InteractiveToolSection() {
                       {/* Confidence pill */}
                       <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        {mockSummary.confidence}% confidence
+                        {displayData.confidence}% confidence
                       </span>
                       <button
                         data-testid="reset-button"
@@ -468,15 +519,15 @@ export default function InteractiveToolSection() {
 
                   {/* Metadata row */}
                   <div className="flex flex-wrap gap-2 mb-7">
-                    <MetaBadge icon={FileText} label={mockSummary.court} />
-                    <MetaBadge icon={Scale} label={mockSummary.date} />
+                    <MetaBadge icon={FileText} label={displayData.court} />
+                    <MetaBadge icon={Scale} label={displayData.date} />
                     <MetaBadge
                       icon={FileText}
-                      label={`${mockSummary.pages} pages`}
+                      label={`${displayData.pages || "N/A"} pages`}
                     />
                     <MetaBadge
                       icon={Sparkles}
-                      label={`${mockSummary.readTime} read`}
+                      label={`${estimatedReadTime} min read`}
                     />
                   </div>
 
@@ -497,10 +548,10 @@ export default function InteractiveToolSection() {
                             fontFamily: "'Playfair Display', Georgia, serif",
                           }}
                         >
-                          {mockSummary.title}
+                          {displayData.title || fileName}
                         </h4>
                         <p className="text-sm text-zinc-500 leading-relaxed">
-                          {mockSummary.summary}
+                          {displayData.summary}
                         </p>
                       </div>
 
@@ -554,7 +605,7 @@ export default function InteractiveToolSection() {
                         Key Points
                       </span>
                       <div className="space-y-3">
-                        {mockSummary.keyPoints.map((point, i) => (
+                        {displayData.keyPoints.map((point, i) => (
                           <motion.div
                             key={i}
                             initial={{ opacity: 0, x: -8 }}
