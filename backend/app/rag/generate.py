@@ -1,5 +1,5 @@
 # app/rag/generate.py
-
+import json
 from app.services.groq_client import GroqClient
 
 def get_groq_client():
@@ -39,11 +39,11 @@ async def generate_answer(query, documents, long_memory, short_memory):
     try:
         prompt = build_prompt(query, documents, long_memory, short_memory)
 
-        groq_client = get_groq_client()   # ✅ added
+        groq_client = get_groq_client() 
         response = groq_client.generate(prompt)
 
         return str(response)
-
+    
     except Exception as e:
         print(f"[Generation Error]: {e}")
         return "Sorry, I couldn't generate a response at the moment."
@@ -52,52 +52,137 @@ async def generate_answer(query, documents, long_memory, short_memory):
 async def generate_summary(text: str):
     try:
         prompt = f"""
-You are NyaySaar, an AI legal assistant.
+You are NyaySaar, an expert AI legal assistant specializing in Indian legal documents.
 
-Analyze the following legal document and provide:
+Your task is to analyze the provided legal document and generate a structured response that is accurate, concise, and understandable to a non-lawyer.
 
-1. A clear, simple SUMMARY
-2. A short VERDICT (1–2 lines stating outcome or key decision)
+IMPORTANT RULES:
+
+1. Use ONLY information present in the document.
+2. Do NOT hallucinate facts, dates, laws, judges, or outcomes.
+3. If information is missing, return "Not Available".
+4. Write in simple language understandable by a common citizen.
+5. Keep the summary factual and neutral.
+6. Return ONLY valid JSON.
+7. Do not include markdown, code fences, explanations, or extra text.
+
+Required JSON format:
+
+{{
+    "title": "",
+    "court": "",
+    "date": "",
+    "caseType": "",
+    "verdict": "",
+    "verdictType": "",
+    "summary": "",
+    "keyPoints": [
+        "",
+        "",
+        ""
+    ],
+    "importantParties": [],
+    "legalSections": [],
+    "confidence": 0
+}}
+
+Field Guidelines:
+
+title:
+- Extract official case title if available.
+
+court:
+- Name of court or tribunal.
+
+date:
+- Judgment/order date.
+
+caseType:
+- Criminal, Civil, Consumer, Family, Labour, Property, Tax, etc.
+
+verdict:
+- Final outcome in 1-2 sentences.
+
+verdictType:
+Must be exactly one of:
+
+allowed
+dismissed
+convicted
+acquitted
+partly_allowed
+pending
+unknown
+
+Never return any other value.
+
+summary:
+- 250-400 words.
+- Explain:
+  - what the dispute was
+  - arguments/issues involved
+  - reasoning of the court
+  - final outcome
+
+keyPoints:
+- 3-5 important takeaways.
+
+importantParties:
+- Names of petitioner, respondent, accused, complainant etc.
+
+legalSections:
+- Mention statutes, acts, sections cited.
+
+confidence:
+- Integer between 0 and 100 representing confidence in extraction accuracy.
 
 Document:
 {text}
-
-Respond strictly in this format:
-SUMMARY:
-<your summary>
-
-VERDICT:
-<your verdict>
 """
 
         groq_client = get_groq_client()
         response = groq_client.generate(prompt)
 
+        print("\n===== RAW LLM RESPONSE =====\n")
+        print(response)
+        print("\n===========================\n")
+        
+
         output = str(response)
 
-        #Parse response
-        summary = ""
-        verdict = ""
+        try:
+            result = json.loads(output)
+            return result
+        
+        except Exception:
+            return {
+        "title": "Not Available",
+        "court": "Not Available",
+        "date": "Not Available",
+        "caseType": "Not Available",
+        "verdict": "Not Available",
+        "verdictType": "unknown",
+        "summary": output,
+        "keyPoints": [],
+        "importantParties": [],
+        "legalSections": [],
+        "confidence": 0
+    }
 
-        if "SUMMARY:" in output and "VERDICT:" in output:
-            parts = output.split("VERDICT:")
-            summary_part = parts[0].replace("SUMMARY:", "").strip()
-            verdict_part = parts[1].strip()
-
-            summary = summary_part
-            verdict = verdict_part
-        else:
-            summary = output
-            verdict = "No clear verdict found"
-
-        return {
-            "summary": summary,
-            "verdict": verdict
-        }
 
     except Exception as e:
         print(f"[Summary Error]: {e}")
-        return {
-            "summary": "Error generating summary",
-            "verdict": "Error generating verdict"
-        }
+
+    return {
+        "title": "Not Available",
+        "court": "Not Available",
+        "date": "Not Available",
+        "caseType": "Not Available",
+        "verdict": "Not Available",
+        "verdictType": "unknown",
+        "summary": "Error generating summary",
+        "keyPoints": [],
+        "importantParties": [],
+        "legalSections": [],
+        "confidence": 0
+    }
