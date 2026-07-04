@@ -7,13 +7,27 @@ from sentence_transformers import SentenceTransformer
 from .chunking import Chunk
 
 #Load embedding model
-model = SentenceTransformer("intfloat/multilingual-e5-base")
+_model = None
+
+
+def get_model():
+    global _model
+
+    if _model is None:
+        print("Loading embedding model...")
+        _model = SentenceTransformer(
+            "intfloat/multilingual-e5-small"
+        )
+
+    return _model
 
 def get_index():
     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
     return pc.Index(os.getenv("PINECONE_INDEX_NAME"))
 
 def embed_text(text: str, is_query: bool = False):
+    model = get_model()
+
     prefix = "query: " if is_query else "passage: "
     formatted_text = prefix + text
 
@@ -21,6 +35,8 @@ def embed_text(text: str, is_query: bool = False):
     return embedding.tolist()
 
 def embed_texts(texts: List[str]) -> List[List[float]]:
+    model = get_model()
+
     formatted = ["passage: " + t for t in texts]
     return model.encode(formatted).tolist()
     
