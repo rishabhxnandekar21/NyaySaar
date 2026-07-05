@@ -33,7 +33,7 @@ def get_current_user(
 
     user = (
         db_session.query(User)
-        .filter(User.id == user_id)
+        .filter(User.id == int(user_id))
         .first()
     )
 

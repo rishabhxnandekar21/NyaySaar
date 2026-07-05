@@ -1,12 +1,11 @@
 
-from uuid import UUID
 from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, ConfigDict
 
 
 class UserResponse(BaseModel):
-    id: UUID
+    id: int
     name: str
     email: EmailStr
     provider: str
