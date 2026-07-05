@@ -1,7 +1,9 @@
+//route controller
+
 import { useRef, useEffect } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import Navbar from "@/components/Navbar";
+import { Routes, Route, useLocation } from "react-router-dom";
+import Navbar from "@/components/navbar";
 import HeroSection from "@/components/HeroSection";
 import ProblemSection from "@/components/ProblemSection";
 import SolutionSection from "@/components/SolutionSection";
@@ -9,7 +11,11 @@ import BenefitsSection from "@/components/BenefitsSection";
 import InteractiveToolSection from "@/components/InteractiveToolSection";
 import SocialProofSection from "@/components/SocialProofSection";
 import Footer from "@/components/Footer";
-import DashboardPage from "@/components/DashboardPage";
+import ProtectedRoute from "@/components/ProtectedRoute";
+
+import Dashboard from "@/pages/Dashboard";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 
 // Scrolls to top on every route change
 function ScrollToTop() {
@@ -53,25 +59,45 @@ function HomePage() {
 // Layout wraps Navbar + page content so you can control spacing/offset in one place
 function Layout({ children }) {
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <Navbar />
       <main>{children}</main>
-    </>
+    </div>
   );
 }
 
 function App() {
   return (
-    <BrowserRouter>
+    <>
       <ScrollToTop />
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <HomePage />
+            </Layout>
+          }
+        />
+
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/signup" element={<Signup />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </>
   );
 }
 

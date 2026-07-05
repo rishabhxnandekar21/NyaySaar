@@ -1,10 +1,19 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Scale } from "lucide-react";
+import { useAuth } from "@/AuthContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { user, logoutUser } = useAuth();
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logoutUser();
+    navigate("/");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,6 +86,23 @@ export default function Navbar() {
             >
               Dashboard
             </Link>
+
+            {/* AUTH BUTTONS */}
+            {!user ? (
+              <Link
+                to="/login"
+                className="px-4 py-2 rounded-full text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all"
+              >
+                Login
+              </Link>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-full text-sm font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 transition-all duration-200"
+              >
+                Logout
+              </button>
+            )}
           </div>
         </div>
       </div>

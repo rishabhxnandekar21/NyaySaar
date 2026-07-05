@@ -12,7 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-export default function DashboardPage() {
+export default function Dashboard() {
   // ✅ STATE
   const [activeTab, setActiveTab] = useState("dashboard");
   const [persona, setPersona] = useState("student");
@@ -84,7 +84,6 @@ export default function DashboardPage() {
 
       setSummary(summaryData.summary || "No summary generated");
       setVerdict(summaryData.verdict || "No verdict generated");
-
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -137,7 +136,7 @@ export default function DashboardPage() {
         setIsTyping(false);
       }
     },
-    [inputValue, persona, docId]
+    [inputValue, persona, docId],
   );
 
   return (
@@ -165,7 +164,6 @@ export default function DashboardPage() {
       {/* MAIN */}
       <main className="flex-1">
         <motion.div className="grid grid-cols-12 h-[calc(100vh-64px)]">
-          
           {/* Upload */}
           <div className="col-span-3 p-6 border-r">
             <h3 className="font-semibold mb-4">Upload Document</h3>
@@ -174,7 +172,12 @@ export default function DashboardPage() {
               <label className="flex flex-col items-center justify-center border-2 border-dashed h-full rounded-xl cursor-pointer">
                 <Upload className="mb-2" />
                 Click to upload PDF
-                <input type="file" accept=".pdf" onChange={handleUpload} hidden />
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleUpload}
+                  hidden
+                />
               </label>
             )}
 
@@ -194,10 +197,17 @@ export default function DashboardPage() {
 
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`px-4 py-2 rounded-xl ${
-                    msg.role === "user" ? "bg-black text-white" : "bg-zinc-100"
-                  }`}>
+                <div
+                  key={i}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`px-4 py-2 rounded-xl ${
+                      msg.role === "user"
+                        ? "bg-black text-white"
+                        : "bg-zinc-100"
+                    }`}
+                  >
                     {msg.content}
                   </div>
                 </div>
@@ -239,7 +249,6 @@ export default function DashboardPage() {
               <p className="text-zinc-400">Upload a document to see analysis</p>
             )}
           </div>
-
         </motion.div>
       </main>
     </div>
