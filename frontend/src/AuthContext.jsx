@@ -14,9 +14,11 @@ export function AuthProvider({ children }) {
 
     localStorage.setItem("token", response.access_token);
 
-    setUser(response.user);
+    const currentUser = await getCurrentUser();
 
-    return response.user;
+    setUser(currentUser);
+
+    return currentUser;
   };
 
   // Signup User
